@@ -40,3 +40,5 @@ Config.TruckType = {
     [1] = "Money",
     [2] = "Mats",
 }
+
+Config.UnloadCoords = vector3(-558.27, -1691.08, 19.28)

@@ -74,6 +74,8 @@ local function spawnUnloaderPeds()
 end
 
 RegisterNetEvent('xuTruckRobbery:client:openUnloaderMenu',function()
+    local tCoords = GetEntityCoords(truckForRob)
+    local dist = #(tCoords - Config.UnloadCoords)
 
     local unloaderMenu = {
         {
@@ -82,7 +84,7 @@ RegisterNetEvent('xuTruckRobbery:client:openUnloaderMenu',function()
             isMenuHeader = true,
         },
     }
-    if HasGottenLoot == false then
+    if HasGottenLoot == false and dist < 10 then
         unloaderMenu[#unloaderMenu + 1] = {
             header = 'Sell the load and get cash',
             txt = '',
