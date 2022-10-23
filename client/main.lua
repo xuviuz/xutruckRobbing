@@ -5,6 +5,7 @@ local truckForRob
 local jacking = false
 local isInTruck = false
 local isPoliceAlertSent = false
+local timerForLocationUpdate = 420000
 
 local PlayerData
 local PlayerJob
@@ -13,6 +14,10 @@ local HasGottenLoot = false
 local unloaderSpawned = false
 
 local truckHasMaterials = false
+
+local LastTimeBlipWasMade
+
+local truckLocationBlip
 
 Citizen.CreateThread(function()
     while true do
@@ -31,7 +36,8 @@ Citizen.CreateThread(function()
 			    end
 		    end	
 		    if isInTruck then
-			    
+                TriggerEvent('xuTruckRobbery:client:robberyLocationBlip')
+                Wait(timerForLocationUpdate)
 		    else
 		    end
 	    end
@@ -202,6 +208,31 @@ RegisterNetEvent('xuTruckRobbery:client:911alert', function()
     end
 end)
 
+RegisterNetEvent('xuTruckRobbery:client:robberyLocationBlip',function()
+    if PlayerJob == "police" then
+        local truckTrans = 150
+        local truckLocationBlipCoords = GetEntityCoords(truckForRob)
+        local rndX,rndY,rndZ 
+        rndX = math.random(-200,200)
+        rndY = math.random(-200,200)
+        rndZ = math.random(-200,200)
+        local modifiedBlipCoords = vector3(truckLocationBlipCoords.x + rndX, truckLocationBlipCoords.y + rndY, truckLocationBlipCoords.z + rndZ)
+        truckLocationBlip = AddBlipForRadius(modifiedBlipCoords, 300.0)
+        SetBlipColour(truckLocationBlip, 1)
+        SetBlipAlpha(truckLocationBlip, truckTrans)
+        while truckTrans ~= 0 do
+            Wait(180 * 4)
+            truckTrans = truckTrans - 1
+            SetBlipAlpha(truckLocationBlip, truckTrans)
+            if truckTrans == 0 then
+                SetBlipSprite(truckLocationBlip, 2)
+                RemoveBlip(truckLocationBlip)
+                return
+            end
+        end
+    end
+end)
+
 RegisterNetEvent('xuTruckRobbery:client:robberyCall', function(streetLabel, coords)
     if PlayerJob == "police" then
         local store = "Freight Truck"
@@ -240,7 +271,7 @@ RegisterNetEvent('xuTruckRobbery:client:robberyCall', function(streetLabel, coor
         AddTextComponentString("10-15: Freight truck robbing")
         EndTextCommandSetBlipName(blip)
         while transG ~= 0 do
-            Wait(180 * 4)
+            Wait(180 )
             transG = transG - 1
             SetBlipAlpha(blip, transG)
             if transG == 0 then
