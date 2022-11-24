@@ -1,0 +1,128 @@
+.pin-login {
+    position: absolute;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 28px;
+    background: #d9deff;
+    border: 1px solid #363b5e;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    font-family: sans-serif;
+    width: 250px;
+    left:50%;
+    margin-left: -130px;
+    top: 35%; 
+  }
+  
+#mainPinLogin {
+  display: none;
+}
+
+  .pin-login__text {
+    margin: 10px auto 10px auto;
+    padding: 10px;
+    display: block;
+    width: 50%;
+    font-size: 0.5em;
+    text-align: center;
+    letter-spacing: 0.2em;
+    background: rgba(0, 0, 0, 0.15);
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    cursor: default;
+  }
+  
+  .pin-login__text--error {
+    color: #901818;
+    background: #ffb3b3;
+    animation-name: loginError;
+    animation-duration: 0.1s;
+    animation-iteration-count: 2;
+  }
+  
+  @keyframes loginError {
+    25% {
+      transform: translateX(-3px);
+    }
+    75% {
+      transform: translateX(3px);
+    }
+  }
+  
+  .pin-login__key {
+    width: 60px;
+    height: 60px;
+    margin: 10px;
+    background: rgba(0, 0, 0, 0.15);
+    color: #363b5e;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .pin-login__key:active {
+    background: rgba(0, 0, 0, 0.25);
+  }
+  .square-input {
+    width: 50px;
+    height: 50px;  
+    text-align: center;
+    font-size: 1.5em;
+    display: inline-block;
+    margin: 3px;
+  }
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button { 
+    appearance: none; 
+    margin: 0; 
+  }
+  #PinCodeSquares{
+    position: absolute;
+    display: none;
+    background-color: black;
+    width: 337px;
+    left:50%;
+    margin-left: -150px;
+    top: 35%; 
+  }
+
+  #routeImg{
+    width: 700px;
+    height: 1000px;
+    background: url('routemap.png');
+    background-position: center;
+    background-size: cover;
+    border: 2px solid black;
+  }
+  #routeImgWrapper{
+    position: absolute;
+    left:30%;
+    top: 5%;
+    display: none;
+    background: url('kb0Zm.jpg');
+    padding: 5px;
+    font-family: sans-serif;
+    text-align: center;
+  }
+  .circle{
+      border-radius: 5px;
+      width: 15px;
+      height: 15px;
+      margin: auto;
+  }
+  #schedule{
+    border: 2px solid green;
+    margin: auto;
+    width: 100%;
+  }
+  #schedule,td{
+    margin: auto;
+    border: 2px solid black;
+    text-align: center;
+  }

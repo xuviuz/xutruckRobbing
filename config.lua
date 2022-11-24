@@ -17,15 +17,79 @@ Config.ItemTable = {
 		[6] = "steel",
 		[7] = "glass",
         [8] = "rubber",
+        [9] = "wool",
 	}
 
+Config.ResetTimer = 15000
+Config.GetLootTimer = 10000
+
 Config.TruckSpawnTable = {
-    [1] = vector4(-303.02,-2720.2,6.00,-303.02),
-    [2] = vector4(-1120.39, -2189.03, 13.26, -129.77),
+    [1] = {
+        coords = vector4(-303.02,-2720.2,6.00,-303.02),
+        color = "#3fa535"
+    },
+    [2] = {
+        coords = vector4(-1090.26, -2216.7, 13.27, 229.1),
+        color = "#e97c11"
+    },
+    [3] = {
+        coords =  vector4(-13.03, 6264.63, 31.24, 31.87),
+        color = "#feed01"
+    },
+    [4] = {
+        coords = vector4(-560.62, 5374.61, 70.21, 343.88),
+        color = "#a535a1"
+    },
+    [5] = {
+        coords =  vector4(2680.43, 2835.88, 40.15, 3.4),
+        color = "#cf1719"
+    },
+    [6] = {
+        coords = vector4(1539.12, -2084.62, 77.08, 1.76),
+        color = "#fe7eb1"
+    },
+    [7] = {
+        coords = vector4(-1897.23, 2011.24, 141.42, 252.1),
+        color = "#009fe3"
+    }
 }
 
 Config.TruckEndLocationTable = {
-    [1] = vector3(891.73,-2456.79,28.58)
+    [1] = {
+        coords = vector3(-1027.32, -513.13, 36.21),
+        color = "#cf1719",
+        border = "#3fa535"
+    },
+    [2] = {
+        coords = vector3(412.56, 6490.78, 28.31),
+        color = "#009fe3",
+        border = "#cf1719"
+    },
+    [3] = {
+        coords = vector3(3626.13, 3767.73, 28.52),
+        color = "#a535a1",
+        border = "#e97c11"
+    },
+    [4] = {
+        coords = vector3(1127.38, -2392.25, 31.58),
+        color = "#11e0e8",
+        border = "#fe7eb1"
+    },
+    [5] = {
+        coords = vector3(-2353.33, 267.23, 165.42),
+        color = "#feed01",
+        border ="#3fa535"
+    },
+    [6] = {
+        coords = vector3(1098.46, 2116.18, 53.55),
+        color = "#3fa535",
+        border = "#feed01"
+    },
+    [7] = {
+        coords = vector3(194.75, 2747.91, 43.43),
+        color = "#e97c11",
+        border = "#a535a1"
+    }
 }
 
 Config.unloaderPeds = {
@@ -34,6 +98,27 @@ Config.unloaderPeds = {
         coords = vector4(-567.21, -1686.66, 18.25, 226.95),
         stolenTruckUnloader = true,
     },
+    {
+        model = 's_m_m_trucker_01',
+        coords = vector4(596.73, -1880.17, 24.04, 77.55),
+        stolenTruckUnloader = true,
+    },
+    {
+        model = 's_m_m_trucker_01',
+        coords = vector4(428.09, 6477.15, 27.79, 149.71),
+        stolenTruckUnloader = true,
+    },
+    {
+        model = 's_m_m_trucker_01',
+        coords = vector4(1975.78, 5164.55, 46.64, 2.56),
+        stolenTruckUnloader = true,
+    },
+    {
+        model = 's_m_m_trucker_01',
+        coords = vector4(188.87, 2758.3, 44.66, 279.97),
+        stolenTruckUnloader = true,
+    }
+        
 }
 
 Config.TruckType = {
@@ -41,4 +126,108 @@ Config.TruckType = {
     [2] = "Mats",
 }
 
-Config.UnloadCoords = vector3(-558.27, -1691.08, 19.28)
+Config.UnloadCoords = {
+    {
+        coords = vector3(599.92, -1867.9, 24.73),
+    },
+    {
+        coords = vector3(-558.27, -1691.08, 19.28)
+    },
+    {
+        coords = vector3(436.83, 6462.32, 28.75)
+    },
+    {
+        coords = vector3(1979.97, 5173.47, 47.64)
+    },
+    {
+        coords = vector3(193.18, 2762.29, 45.43)
+    }
+} 
+
+Config.timerForLocationUpdate = 1680
+Config.amountOfPins = 4
+
+Config.ScheduleLocation = vector3(-67.57, 6254.15, 31.09)
+
+Config.pinCodeCardLocation = {
+    [1] = {
+        coords = vector3(1083.55, -2015.15, 41.2),
+        size1 = 0.7,
+        size2 = 0.9,
+        minz = 40.04,
+        maxz = 43.00,
+        heading = 325.37,
+    },
+    [2] = {
+        coords = vector3(604.17, -3089.25, 6.07),
+        size1 = 1.4,
+        size2 = 1,
+        minz = 3.07,
+        maxz = 7.07,
+        heading = 0,
+    },
+    [3] = {
+        coords = vector3(-435.06, 6154.01, 31.48),
+        size1 = 1.4,
+        size2 = 1,
+        minz = 29.08,
+        maxz = 33.08,
+        heading = 136,
+    },
+    [4] = {
+        coords = vector3(-566.69, 5252.89, 70.49),
+        size1 = 1.6,
+        size2 = 1,
+        minz = 68.29,
+        maxz = 72.27,
+        heading = 345,
+    },
+    [5] = {
+        coords = vector3(1337.84, 4358.93, 44.37),
+        size1 = 1.4,
+        size2 = 1,
+        minz = 41.77,
+        maxz = 45.77,
+        heading = 45,
+    },
+    [6] = {
+        coords = vector3(1394.74, 3614.67, 34.98),
+        size1 = 1.8,
+        size2 = 1,
+        minz = 31.98,
+        maxz = 35.98,
+        heading = 110,
+    },
+    [7] = {
+        coords = vector3(3807.49, 4479.37, 6.37),
+        size1 = 1.2,
+        size2 = 1,
+        minz = 3.77,
+        maxz = 7.77,
+        heading = 295,
+    },
+    [8] = {
+        coords = vector3(3612.57, 3634.04, 44.78),
+        size1 = 0.8,
+        size2 = 1,
+        minz = 42.58,
+        maxz = 46.58,
+        heading = 350,
+    },
+    [9] = {
+        coords = vector3(1242.69, 1870.06, 78.98),
+        size1 = 1.2,
+        size2 = 1,
+        minz = 77.98,
+        maxz = 80.18,
+        heading = 310,
+    },
+    [10] = {
+        coords = vector3(669.72, 100.25, 80.75),
+        size1 = 1.4,
+        size2 = 1,
+        minz = 79.95,
+        maxz = 82.55,
+        heading = 90,
+    },
+}
