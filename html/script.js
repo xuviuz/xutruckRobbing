@@ -71,7 +71,7 @@ class PinLogin {
                     box.remove();
                 })
                 this.el.textDisplay.value = "";
-                UI.onPostCallback('https://xu/xuTruckRobbery:client:handlePassPost',JSON.stringify({result: true}))
+                UI.onPostCallback('https://xuTruckRob/xuTruckRobbery:client:handlePassPost',JSON.stringify({result: true}))
             }
             else{
                 let boxes = document.querySelectorAll('.pin-login__key');
@@ -83,7 +83,7 @@ class PinLogin {
                     box.remove();
                 })
                 this.el.textDisplay.value = "";
-                UI.onPostCallback('https://xu/xuTruckRobbery:client:handlePassPost',JSON.stringify({result: false}))
+                UI.onPostCallback('https://xuTruckRob/xuTruckRobbery:client:handlePassPost',JSON.stringify({result: false}))
             }
         }
     }
@@ -273,7 +273,7 @@ document.onkeyup = function (data)
           scT.remove();
         })
 
-		UI.onPostCallback(`https://xu/xuTruckRobbery:client:closeKeyPad`, JSON.stringify({}));
+		UI.onPostCallback(`https://xuTruckRob/xuTruckRobbery:client:closeKeyPad`, JSON.stringify({}));
 	}
 };
 
