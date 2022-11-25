@@ -19,6 +19,7 @@ local playerCanDoPin = false
 local playerCanFindCard = false
 local cardZoneMade = false
 
+--Threads
 
 Citizen.CreateThread(function()
     while true do
@@ -76,6 +77,54 @@ Citizen.CreateThread(function()
     end
 end)
 
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(5)
+        if playerCanDoPin then
+            exports['qb-core']:DrawText('[E] - Input lock pincode','left')
+            if IsControlJustPressed(0,38) then
+                exports['qb-core']:KeyPressed(38)
+                TriggerEvent('xuTruckRobbery:client:getPinAndOpenKeyPad')
+            end
+        else
+            exports['qb-core']:HideText()
+            Citizen.Wait(1500)
+        end 
+        
+        if playerCanFindCard then
+            if cardZoneMade == false then
+                local idForPinCodeLoc = getOneOfTheFurthestPinCodes()
+                SetNewWaypoint(Config.pinCodeCardLocation[idForPinCodeLoc].coords.x, Config.pinCodeCardLocation[idForPinCodeLoc].coords.y)
+                MissionNotification('The drivers notes shows that the trucks pincodes are here','primary')
+                MissionNotification('Get someone to go get them while you get to an unloader!','primary')
+                exports['qb-target']:AddBoxZone('PinCardZone', Config.pinCodeCardLocation[idForPinCodeLoc].coords, Config.pinCodeCardLocation[idForPinCodeLoc].size1, Config.pinCodeCardLocation[idForPinCodeLoc].size2, {
+                    name='PinCardZone',
+                    heading=Config.pinCodeCardLocation[idForPinCodeLoc].heading,
+                    debugPoly=false,
+                    minZ = Config.pinCodeCardLocation[idForPinCodeLoc].minz,
+                    maxZ = Config.pinCodeCardLocation[idForPinCodeLoc].maxz,
+                    }, {
+                        options = {
+                            {
+                                type = 'client',
+                                event = 'xuTruckRobbery:client:getPinArrAndOpenCard',
+                                icon = 'fas fa-user',
+                                label = 'Look at pin card',
+                            },
+                        },
+                    distance = 3.5
+                })
+                cardZoneMade = true
+            end
+        else
+            exports['qb-target']:RemoveZone("PinCardZone")
+            exports['qb-target']:RemoveZone("TruckRouteZone")
+        end
+    end
+end)
+
+--Functions
+
 function CheckDistForUnloader()
     local tCoords = GetEntityCoords(truckForRob)
     local distBool = false    
@@ -131,6 +180,56 @@ local function deleteUnloaderPeds()
         end
     end
 end
+
+
+function getNearestVeh()
+    local pos = GetEntityCoords(PlayerPedId())
+    local entityWorld = GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0.0, 20.0, 0.0)
+
+    local rayHandle = CastRayPointToPoint(pos.x, pos.y, pos.z, entityWorld.x, entityWorld.y, entityWorld.z, 10, PlayerPedId(), 0)
+    local _, _, _, _, vehicleHandle = GetRaycastResult(rayHandle)
+    return vehicleHandle
+end
+
+
+
+function getOneOfTheFurthestPinCodes()
+    local tCoords = GetEntityCoords(truckForRob)
+    local pinCodeArr = {}
+    local idArr = {}
+
+    for i=1, #Config.pinCodeCardLocation do
+        pinCodeArr[i] = {}
+        pinCodeArr[i].distance = #(tCoords - Config.pinCodeCardLocation[i].coords)
+        pinCodeArr[i].id = i
+    end
+    table.sort(pinCodeArr,function (k1,k2) return k1.distance < k2.distance end)
+    for i = 1, #pinCodeArr do
+        if i <= 3 then 
+            idArr[i] = pinCodeArr[#pinCodeArr+1-i].id
+        end
+    end
+
+    rndPinId = math.random(1,3)
+
+    return idArr[rndPinId]
+end
+
+function ResetValues()
+    jacked = false
+    isInTruck = false
+    isPoliceAlertSent = false
+    timerForLocationActive = false
+    HasGottenLoot = false
+    truckHasMaterials = false
+    amountOfPinsDone = 0
+    allPinsOpened = false
+    playerCanDoPin = false
+    playerCanFindCard = false
+    cardZoneMade = false
+end
+
+--Netevents 
 
 RegisterNetEvent('xuTruckRobbery:client:openUnloaderMenu',function()
     local unloaderMenu = {
@@ -329,82 +428,6 @@ RegisterNetEvent('xuTruckRobbery:client:robberyCall', function(streetLabel, coor
     end
 end)
 
-function getNearestVeh()
-    local pos = GetEntityCoords(PlayerPedId())
-    local entityWorld = GetOffsetFromEntityInWorldCoords(PlayerPedId(), 0.0, 20.0, 0.0)
-
-    local rayHandle = CastRayPointToPoint(pos.x, pos.y, pos.z, entityWorld.x, entityWorld.y, entityWorld.z, 10, PlayerPedId(), 0)
-    local _, _, _, _, vehicleHandle = GetRaycastResult(rayHandle)
-    return vehicleHandle
-end
-
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(5)
-        if playerCanDoPin then
-            exports['qb-core']:DrawText('[E] - Input lock pincode','left')
-            if IsControlJustPressed(0,38) then
-                exports['qb-core']:KeyPressed(38)
-                TriggerEvent('xuTruckRobbery:client:getPinAndOpenKeyPad')
-            end
-        else
-            exports['qb-core']:HideText()
-            Citizen.Wait(1500)
-        end 
-        
-        if playerCanFindCard then
-            if cardZoneMade == false then
-                local idForPinCodeLoc = getOneOfTheFurthestPinCodes()
-                SetNewWaypoint(Config.pinCodeCardLocation[idForPinCodeLoc].coords.x, Config.pinCodeCardLocation[idForPinCodeLoc].coords.y)
-                MissionNotification('The drivers notes shows that the trucks pincodes are here','primary')
-                MissionNotification('Get someone to go get them while you get to an unloader!','primary')
-                exports['qb-target']:AddBoxZone('PinCardZone', Config.pinCodeCardLocation[idForPinCodeLoc].coords, Config.pinCodeCardLocation[idForPinCodeLoc].size1, Config.pinCodeCardLocation[idForPinCodeLoc].size2, {
-                    name='PinCardZone',
-                    heading=Config.pinCodeCardLocation[idForPinCodeLoc].heading,
-                    debugPoly=false,
-                    minZ = Config.pinCodeCardLocation[idForPinCodeLoc].minz,
-                    maxZ = Config.pinCodeCardLocation[idForPinCodeLoc].maxz,
-                    }, {
-                        options = {
-                            {
-                                type = 'client',
-                                event = 'xuTruckRobbery:client:getPinArrAndOpenCard',
-                                icon = 'fas fa-user',
-                                label = 'Look at pin card',
-                            },
-                        },
-                    distance = 3.5
-                })
-                cardZoneMade = true
-            end
-        else
-            exports['qb-target']:RemoveZone("PinCardZone")
-            exports['qb-target']:RemoveZone("TruckRouteZone")
-        end
-    end
-end)
-
-function getOneOfTheFurthestPinCodes()
-    local tCoords = GetEntityCoords(truckForRob)
-    local pinCodeArr = {}
-    local idArr = {}
-
-    for i=1, #Config.pinCodeCardLocation do
-        pinCodeArr[i] = {}
-        pinCodeArr[i].distance = #(tCoords - Config.pinCodeCardLocation[i].coords)
-        pinCodeArr[i].id = i
-    end
-    table.sort(pinCodeArr,function (k1,k2) return k1.distance < k2.distance end)
-    for i = 1, #pinCodeArr do
-        if i <= 3 then 
-            idArr[i] = pinCodeArr[#pinCodeArr+1-i].id
-        end
-    end
-
-    rndPinId = math.random(1,3)
-
-    return idArr[rndPinId]
-end
 
 RegisterNetEvent('xuTruckRobbery:client:handleDonePin', function()
     amountOfPinsDone = amountOfPinsDone + 1
@@ -516,16 +539,3 @@ RegisterCommand('openroute',function()
     TriggerEvent('xuTruckRobbery:client:getRouteAndOpenMap')
 end)
 
-function ResetValues()
-    jacked = false
-    isInTruck = false
-    isPoliceAlertSent = false
-    timerForLocationActive = false
-    HasGottenLoot = false
-    truckHasMaterials = false
-    amountOfPinsDone = 0
-    allPinsOpened = false
-    playerCanDoPin = false
-    playerCanFindCard = false
-    cardZoneMade = false
-end
