@@ -23,21 +23,23 @@ RegisterNetEvent('xuTruckRobbery:server:spawnTruck',function()
 	if ActiveTrucks == 0  then
 		Trucktype = Config.TruckType[math.random(1, #Config.TruckType)]
 		SetPins()
-		TriggerClientEvent('SpawnTruck', -1,Trucktype,TruckCalendar[TrucksSpawnedSoFar].startCoord,TruckCalendar[TrucksSpawnedSoFar].stopCoord)
+		TriggerClientEvent('xuTruckRobbery:client:spawnTruck', -1,Trucktype,TruckCalendar[TrucksSpawnedSoFar].startCoord,TruckCalendar[TrucksSpawnedSoFar].stopCoord)
 		TrucksSpawnedSoFar = TrucksSpawnedSoFar+1
 		TruckCooldown()
 	end
 end)
 
-RegisterCommand("spawnmytruck", function()
-	local _source = source
-	if ActiveTrucks == 0  then
-		Trucktype = Config.TruckType[math.random(1, #Config.TruckType)]
-		SetPins()
-		TriggerClientEvent('SpawnTruck', -1,Trucktype,TruckCalendar[TrucksSpawnedSoFar].startCoord,TruckCalendar[TrucksSpawnedSoFar].stopCoord)
-		TruckCooldown()
-	end
-end)
+
+--This command is for testing out the script so you don't have the wait for the timer
+--RegisterCommand("spawnmytruck", function()
+--	local _source = source
+--	if ActiveTrucks == 0  then
+--		Trucktype = Config.TruckType[math.random(1, #Config.TruckType)]
+--		SetPins()
+--		TriggerClientEvent('SpawnTruck', -1,Trucktype,TruckCalendar[TrucksSpawnedSoFar].startCoord,TruckCalendar[TrucksSpawnedSoFar].stopCoord)
+--		TruckCooldown()
+--	end
+--end)
 
 RegisterServerEvent('xuTruckRobbery:server:callCops', function(streetLabel, coords)
     TriggerClientEvent("xuTruckRobbery:client:robberyCall", -1, streetLabel, coords)

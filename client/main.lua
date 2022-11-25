@@ -184,7 +184,7 @@ RegisterNetEvent('xuTruckRobbery:client:openUnloaderMenu',function()
     exports['qb-menu']:openMenu(unloaderMenu)
 end)
 
-RegisterNetEvent('SpawnTruck',function(str,VehicleSpawn,VehicleRoute)
+RegisterNetEvent('xuTruckRobbery:client:spawnTruck',function(str,VehicleSpawn,VehicleRoute)
     ResetValues()
     if str == "Mats" then
         truckHasMaterials = true
