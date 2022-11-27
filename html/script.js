@@ -61,7 +61,7 @@ class PinLogin {
 
     _attemptLogin() {
         if (this.value.length > 0) {
-            if(this.value == this.pin){
+            if(this.value === this.pin){
                 let boxes = document.querySelectorAll('.pin-login__key');
                 boxes.forEach(box =>{
                     box.remove();
@@ -137,10 +137,10 @@ class PinCodeUI{
       let squareNumber
       let continueOrNot = true;
 
-      while (continueOrNot == true) {
+      while (continueOrNot === true) {
         switch (randomColor) {
           case "cf1719":
-            if (red == 6) {
+            if (red === 6) {
               randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
             } else {
               squareNumber = pin1Arr[red]
@@ -149,7 +149,7 @@ class PinCodeUI{
             }
             break;
           case "3fa535":
-            if (green == 6) {
+            if (green === 6) {
               randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
             } else {
               squareNumber = pin2Arr[green]
@@ -158,7 +158,7 @@ class PinCodeUI{
             }
             break;
           case "feed01":
-            if (yellow == 6) {
+            if (yellow === 6) {
               randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
             } else {
               squareNumber = pin3Arr[yellow]
@@ -167,7 +167,7 @@ class PinCodeUI{
             }
             break;
           case "009fe3":
-            if (blue == 6) {
+            if (blue === 6) {
               randomColor = COLORS[Math.floor(Math.random() * COLORS.length)];
             } else {
               squareNumber = pin4Arr[blue]
@@ -200,7 +200,7 @@ var UI = {
     addZoom("routeImg")
     window.addEventListener('message', (event) => {
 			let item = event.data;
-        if(item.codeOrPad == 1){
+        if(item.codeOrPad === 1){
           if(item.display) {
             mainPinLogin.style.display = "inline-block";
             mainPinLogin.style.background = item.PadBackgroundColor;
@@ -212,7 +212,7 @@ var UI = {
 			    else {
             mainPinLogin.style.display = "none";
 			        }
-        }else if(item.codeOrPad == 2) {
+        }else if(item.codeOrPad === 2) {
           if(item.display){
             PinCodeSquares.style.display = "inline-block";
             new PinCodeUI({
@@ -221,7 +221,7 @@ var UI = {
           else {
             PinCodeSquares.style.display = "none";
             }
-          } else if(item.codeOrPad == 3) {
+          } else if(item.codeOrPad === 3) {
             if(item.display){
               routeImgWrapper.style.display = "inline-block";
               new RouteImgUi({
@@ -255,7 +255,7 @@ var UI = {
 
 document.onkeyup = function (data) 
 {
-	if (data.which == 27) {
+	if (data.which === 27) {
         let boxes = document.querySelectorAll('.pin-login__key');
         boxes.forEach(box =>{
             box.remove();
