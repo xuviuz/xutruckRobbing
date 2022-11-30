@@ -21,7 +21,9 @@ Config.ItemTable = {
 	}
 
 Config.ResetTimer = 15000
-Config.GetLootTimer = 10000
+Config.GetLootTimer = 30000
+Config.CorrectPinWaitTimer = 10000
+Config.WrongPinWaitTimer = 25000
 
 Config.TruckSpawnTable = {
     [1] = {

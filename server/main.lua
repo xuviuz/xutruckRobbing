@@ -36,7 +36,7 @@ end)
 --	if ActiveTrucks == 0  then
 --		Trucktype = Config.TruckType[math.random(1, #Config.TruckType)]
 --		SetPins()
---		TriggerClientEvent('SpawnTruck', -1,Trucktype,TruckCalendar[TrucksSpawnedSoFar].startCoord,TruckCalendar[TrucksSpawnedSoFar].stopCoord)
+--		TriggerClientEvent('xuTruckRobbery:client:spawnTruck', -1,Trucktype,TruckCalendar[TrucksSpawnedSoFar].startCoord,TruckCalendar[TrucksSpawnedSoFar].stopCoord)
 --		TruckCooldown()
 --	end
 --end)

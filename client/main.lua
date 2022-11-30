@@ -18,6 +18,9 @@ local allPinsOpened = false
 local playerCanDoPin = false
 local playerCanFindCard = false
 local cardZoneMade = false
+local playerDidCorrectPin = false
+local playerDidWrongPin = false
+local gameTimeForPinTimer = 0
 
 --Threads
 
@@ -72,6 +75,22 @@ Citizen.CreateThread(function()
                     TriggerEvent('xuTruckRobbery:client:robberyLocationBlip')
                 end
 		    end
+            if playerDidCorrectPin then
+                while GetGameTimer() - gameTimeForPinTimer < Config.CorrectPinWaitTimer do
+                    playerDidCorrectPin = true
+                    Citizen.Wait(10)
+                end
+                local txtForNoti = "Correct, " .. amountOfPinsDone .. " out of " .. amountOfPins .." done"
+                MissionNotification(txtForNoti,'primary')
+                playerDidCorrectPin = false
+            end
+            if playerDidWrongPin then
+                while GetGameTimer() - gameTimeForPinTimer < Config.WrongPinWaitTimer do
+                    playerDidWrongPin = true
+                    Citizen.Wait(10)
+                end
+                playerDidWrongPin = false
+            end
 	    end
     Citizen.Wait(1000)
     end
@@ -80,7 +99,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         Citizen.Wait(5)
-        if playerCanDoPin then
+        if playerCanDoPin and playerDidCorrectPin == false and playerDidWrongPin == false then
             exports['qb-core']:DrawText('[E] - Input lock pincode','left')
             if IsControlJustPressed(0,38) then
                 exports['qb-core']:KeyPressed(38)
@@ -430,6 +449,9 @@ end)
 
 
 RegisterNetEvent('xuTruckRobbery:client:handleDonePin', function()
+
+    playerDidCorrectPin = true
+    gameTimeForPinTimer = GetGameTimer()
     amountOfPinsDone = amountOfPinsDone + 1
     if amountOfPinsDone == Config.amountOfPins then
         allPinsOpened = true
@@ -438,12 +460,15 @@ RegisterNetEvent('xuTruckRobbery:client:handleDonePin', function()
     if rndNr < 25 then
         TriggerEvent('xuTruckRobbery:client:911alert')
     end
-    local txtForNoti = "Correct, " .. amountOfPinsDone .. " out of " .. amountOfPins .." done"
-    MissionNotification(txtForNoti,'primary')
+    local txtForNotiWaitingForServer = "Keypad connecting with database, please wait..."
+    MissionNotification(txtForNotiWaitingForServer,'primary')
 end)
 RegisterNetEvent('xuTruckRobbery:client:handleWrongPin', function()
+    playerDidWrongPin = true
+    gameTimeForPinTimer = GetGameTimer()
     TriggerEvent("xuTruckRobbery:client:911alert")
-    MissionNotification("WRONG PASSWORD",'error')
+    local txtForFailedPinNoti = "WRONG PASSWORD, SYSTEM LOCKED FOR ".. (Config.WrongPinWaitTimer/1000) .. " SECONDS"
+    MissionNotification(txtForFailedPinNoti,'error')
 end)
 
 RegisterNetEvent('xuTruckRobbery:client:openKeyPad', function(rndPin)
@@ -473,7 +498,7 @@ RegisterNUICallback('xuTruckRobbery:client:handlePassPost',function(data)
     })
     SetNuiFocus(false,false)
 
-    if data.result then
+    if data then
         TriggerEvent('xuTruckRobbery:client:handleDonePin')
     else
         TriggerEvent('xuTruckRobbery:client:handleWrongPin')
