@@ -21,6 +21,8 @@ local cardZoneMade = false
 local playerDidCorrectPin = false
 local playerDidWrongPin = false
 local gameTimeForPinTimer = 0
+local truckEndPoint 
+local trucker
 
 --Threads
 
@@ -42,6 +44,19 @@ Citizen.CreateThread(function()
 			    if isInTruck then
 				    isInTruck = false
 			    end
+                if trucker then
+                    if IsPedDeadOrDying(trucker, false) then
+                        trucker = nil
+                    else
+                        if IsPedInVehicle(trucker,truckForRob,false) then
+                            if #(tCoords - truckEndPoint) < 20 then
+                                TriggerEvent('xuTruckRobbery:client:despawnTruck')
+                                TriggerEvent('xuTruckRobbery:client:despawnTrucker')
+                            end
+                        end
+                    end
+
+                end
                 if allPinsOpened == false then
                     if CheckDistForUnloader() then
                         local closestVehicle = getNearestVeh()
@@ -116,33 +131,45 @@ Citizen.CreateThread(function()
                 SetNewWaypoint(Config.pinCodeCardLocation[idForPinCodeLoc].coords.x, Config.pinCodeCardLocation[idForPinCodeLoc].coords.y)
                 MissionNotification('The drivers notes shows that the trucks pincodes are here','primary')
                 MissionNotification('Get someone to go get them while you get to an unloader!','primary')
-                exports['qb-target']:AddBoxZone('PinCardZone', Config.pinCodeCardLocation[idForPinCodeLoc].coords, Config.pinCodeCardLocation[idForPinCodeLoc].size1, Config.pinCodeCardLocation[idForPinCodeLoc].size2, {
-                    name='PinCardZone',
-                    heading=Config.pinCodeCardLocation[idForPinCodeLoc].heading,
-                    debugPoly=false,
-                    minZ = Config.pinCodeCardLocation[idForPinCodeLoc].minz,
-                    maxZ = Config.pinCodeCardLocation[idForPinCodeLoc].maxz,
-                    }, {
-                        options = {
-                            {
-                                type = 'client',
-                                event = 'xuTruckRobbery:client:getPinArrAndOpenCard',
-                                icon = 'fas fa-user',
-                                label = 'Look at pin card',
-                            },
-                        },
-                    distance = 3.5
+                exports.ox_target:addBoxZone({
+                    coords = Config.pinCodeCardLocation[idForPinCodeLoc].coords,
+                    size = Config.pinCodeCardLocation[idForPinCodeLoc].size,
+                    rotation = Config.pinCodeCardLocation[idForPinCodeLoc].heading,
+                    debug = true,
+                    options = {
+                        name = 'pincardloc',
+                        event = 'xuTruckRobbery:client:getPinArrAndOpenCard',
+                        icon = 'fas fa-user',
+                        label = 'Look at pin card',
+                    }
                 })
                 cardZoneMade = true
             end
         else
-            exports['qb-target']:RemoveZone("PinCardZone")
-            exports['qb-target']:RemoveZone("TruckRouteZone")
+            if cardZoneMade then
+                exports.ox_target:removeZone("PinCardZone")
+                exports.ox_target:removeZone("TruckRouteZone")
+            end
         end
     end
 end)
 
 --Functions
+
+function createScheduleBox()
+    exports.ox_target:addBoxZone({
+        coords = vec3(-69.14, 6252.99, 31.29),
+        size = vec3(0.6,0.6,0.6),
+        rotation = 33,
+        debug = true,
+        options = {
+            name = 'box',
+            event = 'xuTruckRobbery:client:getRouteAndOpenMap',
+            icon = 'fas fa-user',
+            label = 'Look at route list',
+        }
+    })
+end
 
 function CheckDistForUnloader()
     local tCoords = GetEntityCoords(truckForRob)
@@ -173,18 +200,17 @@ local function spawnUnloaderPeds()
         local unloaderOptions = nil
         if current.stolenTruckUnloader then
             unloaderOptions = {
-                label = 'Talk with unloader',
+                name = 'unloaderPeds',
+                event = 'xuTruckRobbery:client:openUnloaderMenu',
                 icon = 'far fa-arrow-alt-circle-right',
-                action = function()
-                    TriggerEvent('xuTruckRobbery:client:openUnloaderMenu')
+                label = 'Talk with unloader',
+                canInteract = function(_,distance)
+                    return distance < 2
                 end
             }
         end
         if unloaderOptions then
-            exports['qb-target']:AddTargetEntity(unloaderPed, {
-                options = {unloaderOptions},
-                distance = 2.0
-            })
+            exports.ox_target:addLocalEntity(unloaderPed, unloaderOptions)
         end
     end
     unloaderSpawned = true
@@ -251,34 +277,24 @@ end
 --Netevents 
 
 RegisterNetEvent('xuTruckRobbery:client:openUnloaderMenu',function()
-    local unloaderMenu = {
-        {
-            header = 'Unloader',
-            txt = 'Decide what to do with the trucks load',
-            isMenuHeader = true,
-        },
-    }
+
+    local unloaderMenu = {}
+
     if HasGottenLoot == false and CheckDistForUnloader() and allPinsOpened then
         unloaderMenu[#unloaderMenu + 1] = {
-            header = 'Sell the load and get cash',
-            txt = '',
-            params = {
-                event = 'xuTruckRobbery:client:waitForLootNoti',
-                args = {
-                    typebool = true
-                }
+            title = 'Sell the load and get cash',
+            event = 'xuTruckRobbery:client:waitForLootNoti',
+            args = {
+                typebool = true
             }
         }
     
         if truckHasMaterials then
             unloaderMenu[#unloaderMenu + 1] = {
-                header = 'Get the materials from the truck',
-                txt = '',
-                params = {
-                    event = 'xuTruckRobbery:client:waitForLootNoti',
-                    args = {
-                        typebool = false
-                    }
+                title = 'Get the materials from the truck',
+                event = 'xuTruckRobbery:client:waitForLootNoti',
+                args = {
+                    typebool = false
                 }
             }
         
@@ -286,20 +302,26 @@ RegisterNetEvent('xuTruckRobbery:client:openUnloaderMenu',function()
     else
         if CheckDistForUnloader() and allPinsOpened == false then
             unloaderMenu[#unloaderMenu + 1] = {
-                header = 'Unlock the locks doofus',
-                txt = '',
+                title = 'Unlock the locks doofus',
                 disabled = true,
             }    
         else
             unloaderMenu[#unloaderMenu + 1] = {
-                header = 'What do you want?',
-                txt = '',
+                title = 'What do you want?',
                 disabled = true,
             }    
         end
     end
 
-    exports['qb-menu']:openMenu(unloaderMenu)
+    lib.registerContext({
+        id = 'unloader_menu',
+        title = 'Unloader',
+        onExit = function()
+            
+        end,
+        options = unloaderMenu,
+    })
+    lib.showContext('unloader_menu')
 end)
 
 RegisterNetEvent('xuTruckRobbery:client:spawnTruck',function(str,VehicleSpawn,VehicleRoute)
@@ -339,7 +361,19 @@ RegisterNetEvent('xuTruckRobbery:client:spawnTruck',function(str,VehicleSpawn,Ve
     SetPedAsCop(pilot, true)
 
 	TaskVehicleDriveToCoordLongrange(pilot,truckForRob,VehicleRoute.x,VehicleRoute.y,VehicleRoute.z, 30.0,443,20.0)
+    truckEndPoint = VehicleRoute
+    trucker = pilot
 
+end)
+
+RegisterNetEvent('xuTruckRobbery:client:despawnTruck',function(data)
+    DeleteVehicle(truckForRob)
+    truckForRob = nil
+end)
+
+RegisterNetEvent('xuTruckRobbery:client:despawnTrucker',function(data)
+    DeletePed(trucker)
+    trucker = nil
 end)
 
 RegisterNetEvent('xuTruckRobbery:client:waitForLootNoti',function(data)
@@ -531,14 +565,6 @@ RegisterNUICallback('xuTruckRobbery:client:closeKeyPad',function()
     SetNuiFocus(false,false)
 end)
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    spawnUnloaderPeds()
-end)
-
-RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
-    deleteUnloaderPeds()
-end)
-
 RegisterNetEvent('xuTruckRobbery:client:getPinAndOpenKeyPad', function()
     TriggerServerEvent('xuTruckRobbery:server:getPin',amountOfPinsDone)
 end)
@@ -564,3 +590,13 @@ RegisterCommand('openroute',function()
     TriggerEvent('xuTruckRobbery:client:getRouteAndOpenMap')
 end)
 
+AddEventHandler('onResourceStart', function(resourceName)
+    if (GetCurrentResourceName() ~= resourceName) then
+        return
+    end
+
+    createScheduleBox()
+
+    deleteUnloaderPeds()
+    spawnUnloaderPeds()
+end)

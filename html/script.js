@@ -72,7 +72,7 @@ class PinLogin {
                 })
                 this.el.textDisplay.value = "";
                 let result = true;
-                $.post('https://xuTruckRob/xuTruckRobbery:client:handlePassPost',JSON.stringify(result));
+                $.post('https://xutruckRobbing/xuTruckRobbery:client:handlePassPost',JSON.stringify(result));
             }
             else{
                 let boxes = document.querySelectorAll('.pin-login__key');
@@ -85,7 +85,7 @@ class PinLogin {
                 })
                 this.el.textDisplay.value = "";
                 let result = false;
-                $.post('https://xuTruckRob/xuTruckRobbery:client:handlePassPost',JSON.stringify(result))
+                $.post('https://xutruckRobbing/xuTruckRobbery:client:handlePassPost',JSON.stringify(result))
             }
         }
     }
@@ -264,7 +264,7 @@ document.onkeyup = function (data)
           scT.remove();
         })
 
-		$.post(`https://xuTruckRob/xuTruckRobbery:client:closeKeyPad`);
+		$.post(`https://xutruckRobbing/xuTruckRobbery:client:closeKeyPad`);
 	}
 };
 

@@ -31,15 +31,15 @@ end)
 
 
 --This command is for testing out the script so you don't have the wait for the timer
---RegisterCommand("spawnmytruck", function()
---	local _source = source
---	if ActiveTrucks == 0  then
---		Trucktype = Config.TruckType[math.random(1, #Config.TruckType)]
---		SetPins()
---		TriggerClientEvent('xuTruckRobbery:client:spawnTruck', -1,Trucktype,TruckCalendar[TrucksSpawnedSoFar].startCoord,TruckCalendar[TrucksSpawnedSoFar].stopCoord)
---		TruckCooldown()
---	end
---end)
+RegisterCommand("spawnmytruck", function()
+	local _source = source
+	if ActiveTrucks == 0  then
+		Trucktype = Config.TruckType[math.random(1, #Config.TruckType)]
+		SetPins()
+		TriggerClientEvent('xuTruckRobbery:client:spawnTruck', -1,Trucktype,TruckCalendar[TrucksSpawnedSoFar].startCoord,TruckCalendar[TrucksSpawnedSoFar].stopCoord)
+		TruckCooldown()
+	end
+end)
 
 RegisterServerEvent('xuTruckRobbery:server:callCops', function(streetLabel, coords)
     TriggerClientEvent("xuTruckRobbery:client:robberyCall", -1, streetLabel, coords)
@@ -48,7 +48,7 @@ end)
 RegisterNetEvent('xuTruckRobbery:server:getMats', function()
 	local src = source
 	local Player = QBCore.Functions.GetPlayer(src)
-	Citizen.Wait(GetLootTimer)
+	Citizen.Wait(Config.GetLootTimer)
 		for _ = 1, math.random(1, Config.MaxItemsReceived), 1 do
 		  local randItem = Config.ItemTable[math.random(1, #Config.ItemTable)]
 		  local amount = math.random(Config.MinItemReceivedQty, Config.MaxItemReceivedQty)
@@ -79,6 +79,8 @@ RegisterNetEvent('xuTruckRobbery:server:getMoney',function()
 	Citizen.Wait(Config.GetLootTimer)
 	local amountToGet = math.random(Config.MinCashToReceive, Config.MaxCashToReceive)
 	Player.Functions.AddMoney('cash', amountToGet)
+	TriggerClientEvent('xuTruckRobbery:client:despawnTruck',-1)
+	TriggerClientEvent('xuTruckRobbery:client:despawnTrucker',-1)
 end)
 
 RegisterNetEvent('xuTruckRobbery:server:getPin',function(amountDone)
